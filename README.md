@@ -242,7 +242,7 @@ SMOTE improved fraud detection performance compared to the baseline model but st
 
 ## Model Comparison visually
 
-![Model Comparison](./Images/Compare_result.jpg)
+![Model Comparison](./images/Compare_result.jpg)
 
 ---
 
