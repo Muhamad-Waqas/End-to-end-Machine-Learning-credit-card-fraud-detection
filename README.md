@@ -239,6 +239,13 @@ SMOTE improved fraud detection performance compared to the baseline model but st
 
 ---
 
+
+## Model Comparison visually
+
+![Fraud Detection Model Comparison](images/Compare_result.png)
+
+---
+
 # Key Findings
 
 - Accuracy alone can be misleading when working with imbalanced datasets.
