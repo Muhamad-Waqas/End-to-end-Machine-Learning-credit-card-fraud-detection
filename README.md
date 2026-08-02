@@ -1,150 +1,287 @@
-Credit Card Fraud Detection
-Project Overview
+# Credit Card Fraud Detection using Machine Learning
+
+## Project Overview
+
 This project focuses on detecting fraudulent credit card transactions using Machine Learning techniques. The objective is to build a classification model capable of identifying fraudulent transactions while minimizing false alarms.
-The dataset contains transaction-level information such as transaction amount, merchant category, transaction velocity, device trust score, and other fraud-related indicators.
 
-Business Problem
-Fraudulent transactions represent a small percentage of total transactions, making fraud detection a highly imbalanced classification problem.
-A model that predicts every transaction as legitimate may achieve high accuracy while completely failing to detect fraud.
-Therefore, the primary goal is not only achieving high accuracy but also maximizing fraud detection performance using metrics such as Recall, Precision, and F1-Score.
+The project follows a complete Machine Learning workflow, including Exploratory Data Analysis (EDA), data preprocessing, feature engineering, handling class imbalance, model training, evaluation, and comparison.
 
+---
 
+## Dataset
 
-Dataset Summary
-Metric	Value
-Total Transactions	10,000
-Legitimate Transactions	9,849
-Fraudulent Transactions	151
-Fraud Ratio	~1.5%
-The dataset exhibits significant class imbalance, requiring specialized evaluation and balancing techniques.
+This project uses the Credit Card Fraud Detection Dataset available on Kaggle.
 
-Exploratory Data Analysis & Preprocessing
+### Dataset Source
 
+https://www.kaggle.com/code/abdelazizelserty/credit-card-fraud-detection-dataset/input
+
+### Dataset Characteristics
+
+| Metric | Value |
+|----------|----------|
+| Total Transactions | 10,000 |
+| Legitimate Transactions | 9,849 |
+| Fraudulent Transactions | 151 |
+| Fraud Ratio | ~1.5% |
+
+### Challenge
+
+The dataset is highly imbalanced, with fraudulent transactions representing only a small fraction of the total data. This makes fraud detection challenging because a model can achieve high accuracy while still failing to detect fraud effectively.
+
+---
+
+# Business Problem
+
+Financial institutions process thousands of transactions daily, making it difficult to manually identify fraudulent activity.
+
+The goal of this project is to build a machine learning model that can accurately identify fraudulent transactions while balancing:
+
+- Fraud Detection Rate (Recall)
+- False Fraud Alerts (Precision)
+
+---
+
+# Technologies Used
+
+- Python
+- Pandas
+- NumPy
+- Matplotlib
+- Seaborn
+- Scikit-Learn
+- Imbalanced-Learn (SMOTE)
+- Logistic Regression
+
+---
+
+# Project Workflow
+
+```text
+Data Understanding
+        ↓
 Exploratory Data Analysis
-The following analyses were performed:
-•	Missing value analysis
-•	Duplicate detection
-•	Target class distribution analysis
-•	Feature distribution analysis
-•	Outlier identification
-•	Correlation analysis
-
-Train Test Split 
-To prevent data leakage, the dataset was split into training and testing sets before preprocessing. Scaling, encoding, and SMOTE were fitted using only the training data and then applied to the test set.
-
+        ↓
+Feature Engineering
+        ↓
+Train-Test Split
+        ↓
 Data Preprocessing
-The preprocessing pipeline included:
-Log Transformation
-Log1p transformation was applied to:
-•	Amount
-•	Velocity Last 24 Hours
-This reduced right-skewness and compressed extreme values.
+        ↓   
+Model Training
+        ↓
+Class Imbalance Handling
+        ↓
+Model Evaluation
+        ↓
+Insights & Conclusion
+```
 
-One-Hot Encoding
-Categorical features were converted into numerical representations using One-Hot Encoding.
+---
 
-Feature Scaling
+# Stage 1: Exploratory Data Analysis & Preprocessing
+
+## Exploratory Data Analysis (EDA)
+
+The following analyses were performed:
+
+- Missing Value Analysis
+- Duplicate Record Analysis
+- Target Class Distribution
+- Numerical Feature Distribution
+- Outlier Detection
+- Correlation Analysis
+
+### Key Finding
+
+The target variable was highly imbalanced:
+
+- Legitimate Transactions: 98.49%
+- Fraudulent Transactions: 1.51%
+
+This indicated that accuracy alone would not be a reliable evaluation metric.
+
+---
+
+## Feature Engineering & Preprocessing
+
+### Log Transformation
+
+Log1p transformation was applied to highly right-skewed numerical features:
+
+- Amount
+- Velocity Last 24 Hours
+
+This helped reduce skewness and compress extreme values.
+
+### One-Hot Encoding
+
+Categorical variables were converted into numerical representations using One-Hot Encoding.
+
+### Feature Scaling
+
 StandardScaler was applied to numerical features:
-•	Amount
-•	Velocity Last 24 Hours
-•	Cardholder Age
-•	Transaction Hour
-•	Device Trust Score
-Binary features were left unchanged.
 
+- Amount
+- Cardholder Age
+- Transaction Hour
+- Device Trust Score
+- Velocity Last 24 Hours
 
- Machine Learning Modeling And Improving Model
-Baseline Model
-Logistic Regression
-The first model trained was Logistic Regression without any imbalance handling techniques.
+Binary features were not scaled.
 
-Results
-Accuracy: 0.9395
+### Data Leakage Prevention
 
+To prevent data leakage:
 
-Confusion Matrix :
- [[1849  121]
- [   0   30]]
+- Train-Test Split was performed before preprocessing.
+- Encoders and Scalers were fitted only on training data.
+- Test data was transformed using the fitted training parameters.
+- SMOTE was applied only on the training set.
 
+---
 
-Classification Report :
-               precision    recall  f1-score   support
+# Stage 2: Machine Learning Modeling
 
-           0       1.00      0.94      0.97      1970
-           1       0.20      1.00      0.33        30
+## Baseline Model
 
-    accuracy                           0.94      2000
-   macro avg       0.60      0.97      0.65      2000
-weighted avg       0.99      0.94      0.96      2000	
+### Logistic Regression
 
+A baseline Logistic Regression model was trained on the preprocessed dataset.
 
-Observations
-Although the model achieved excellent accuracy and precision, it detected only 50% of fraudulent transactions.
-This highlights the limitations of relying solely on accuracy when evaluating imbalanced datasets.
+### Results
 
-Handling Class Imbalance
-Approach 1: Class Weight
+| Metric | Value |
+|----------|----------|
+| Accuracy | 99.2% |
+| Precision | 94% |
+| Recall | 50% |
+| F1-Score | 65% |
+
+### Confusion Matrix
+
+```text
+[[1969    1]
+ [  15   15]]
+```
+
+### Observation
+
+The model achieved excellent accuracy and precision but failed to detect half of the fraudulent transactions.
+
+---
+
+# Handling Class Imbalance
+
+## Approach 1: Class Weight
+
 Logistic Regression was retrained using:
+
+```python
 class_weight='balanced'
+```
 
-Results
-Accuracy: 0.9295
+### Results
 
-Confusion Matrix: 
-[[1829  141]
- [   0   30]]
-Classfication Report:
-              precision    recall  f1-score   support
-          0       1.00      0.93      0.96      1970
-           1       0.18      1.00      0.30        30
- accuracy                           0.93      2000
-   macro avg       0.59      0.96      0.63      2000
-weighted avg       0.99      0.93      0.95      2000
+| Metric | Value |
+|----------|----------|
+| Accuracy | 92.95% |
+| Precision | 18% |
+| Recall | 100% |
+| F1-Score | 30% |
 
-Observations
-The model successfully detected all fraud cases but produced a large number of false positives, significantly reducing precision.
+### Confusion Matrix
 
-Approach 2: SMOTE
-SMOTE was applied to the training data to generate synthetic fraud samples and balance class distribution.
+```text
+[[1829 141]
+ [   0  30]]
+```
 
-Results
-Accuracy: 0.9395
+### Observation
 
-Confusion Matrix :
- [[1849  121]
- [   0   30]]
+The model successfully detected all fraudulent transactions but generated a large number of false positives.
 
-Classification Report :
-               precision    recall  f1-score   support
-           0       1.00      0.94      0.97      1970
-           1       0.20      1.00      0.33        30
-    accuracy                           0.94      2000
-   macro avg       0.60      0.97      0.65      2000
-weighted avg       0.99      0.94      0.96      2000
+---
 
-Observations
-SMOTE improved fraud detection performance compared to the baseline model but introduced many false positive predictions.
+## Approach 2: SMOTE
+
+SMOTE (Synthetic Minority Oversampling Technique) was applied to balance the training dataset.
+
+### Results
+
+| Metric | Value |
+|----------|----------|
+| Accuracy | 93.95% |
+| Precision | 20% |
+| Recall | 100% |
+| F1-Score | 33% |
+
+### Confusion Matrix
+
+```text
+[[1849 121]
+ [   0  30]]
+```
+
+### Observation
+
+SMOTE improved fraud detection performance compared to the baseline model but still produced a high number of false positive predictions.
+
+---
+
+# Model Comparison
+
+| Model | Accuracy | Precision | Recall | F1-Score |
+|----------|----------|----------|----------|----------|
+| Logistic Regression | 99.2% | 94% | 50% | 65% |
+| Logistic Regression + Class Weight | 92.95% | 18% | 100% | 30% |
+| Logistic Regression + SMOTE | 93.95% | 20% | 100% | 33% |
+
+---
+
+# Key Findings
+
+- Accuracy alone can be misleading when working with imbalanced datasets.
+- Precision and Recall provide a better understanding of fraud detection performance.
+- The baseline model achieved the highest Precision and F1-Score.
+- Class Weight and SMOTE improved Recall from 50% to 100%.
+- Improving Recall introduced a significant increase in False Positives.
+- Fraud detection requires balancing business objectives rather than optimizing a single metric.
+
+---
+
+# What I Learned
+
+Through this project, I gained practical experience in:
+
+- End-to-end Machine Learning workflows
+- Exploratory Data Analysis
+- Feature Engineering
+- Handling Class Imbalance
+- Preventing Data Leakage
+- Model Evaluation using Precision, Recall, F1-Score, and Confusion Matrix
+- Understanding Precision-Recall Tradeoffs
+- Comparing multiple approaches for solving imbalanced classification problems
+
+One of the most valuable lessons was learning that:
+
+> A model is not better simply because it has higher accuracy. The best model is the one that aligns with the business objective and balances the right performance metrics.
+
+---
+
+# Conclusion
+
+Logistic Regression provided a strong baseline model with high accuracy and precision. However, due to the severe class imbalance, it detected only 50% of fraudulent transactions.
+
+Applying Class Weight and SMOTE successfully increased Recall to 100%, ensuring all fraud cases were detected. However, this improvement came at the cost of a significant increase in false positives and reduced Precision.
+
+This project highlights the importance of evaluating machine learning models beyond accuracy and understanding the tradeoffs involved in fraud detection systems.
 
 
-Model Comparison
-Model	Accuracy	Precision	Recall	F1-Score
-Logistic Regression	99.2%	94%	50%	65%
-Logistic Regression + Class Weight	92.95%	18%	100%	30%
-Logistic Regression + SMOTE	93.95%	20%	100%	33%
+## Author
 
+**Muhammad Waqas**
 
-Key Learnings
-This project provided several practical machine learning insights:
-•	Accuracy is not sufficient for evaluating imbalanced classification problems.
-•	Precision and Recall must be analyzed together.
-•	Improving Recall often comes at the cost of Precision.
-•	Class imbalance techniques should be validated through experimentation rather than assumed to improve model performance.
-•	Confusion Matrix analysis provides deeper insight into model behavior than accuracy alone.
+Machine Learning & Data Science Enthusiast
 
-Conclusion
-The baseline Logistic Regression model achieved the strongest balance between Precision and F1-Score but failed to detect half of the fraudulent transactions.
-Class Weight and SMOTE successfully improved Recall to 100%, ensuring all fraud cases were detected. However, this improvement came with a substantial increase in false positives.
-These experiments demonstrate the tradeoff between fraud detection performance and false alarm rates in highly imbalanced datasets.
-
-
-
+Building end-to-end machine learning projects and sharing the learning journey publicly.
